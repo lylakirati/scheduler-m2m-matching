@@ -3,12 +3,13 @@ from collections import defaultdict
 from agent import Student, Course
 
 
-def find_matching(student_list, course_list):
+def find_matching(student_list, course_list, verbose = False):
     da_round = 0
     
     while True:
         da_round += 1
-        print(f"Round: {da_round}")
+        if verbose:
+            print(f"Round: {da_round}")
         # proposals = dict course_list_index: students
         proposals = defaultdict(list)
         
@@ -23,10 +24,12 @@ def find_matching(student_list, course_list):
             
         if n_proposals == 0: # check if no proposals can be made, terminate
             # finalize enrollment
-            print("\tDA terminates and all proposals have been finalized.")
+            if verbose:
+                print("\tDA terminates and all proposals have been finalized.")
             break
         
-        print(f"\tNumber of proposals made: {n_proposals}")
+        if verbose:
+            print(f"\tNumber of proposals made: {n_proposals}")
         
         n_rejects = 0
         # otherwise, courses tentatively accept proposing students based on their preferences
@@ -37,19 +40,20 @@ def find_matching(student_list, course_list):
             for student in rejects:
                 student.remove_course(course_id)
                 n_rejects += 1
-        print(f"\tNumber of proposals being rejected: {n_rejects}")
-    
+        if verbose:
+            print(f"\tNumber of proposals being rejected: {n_rejects}")
     
     return student_list, course_list
 
 # =============================================================================== # 
 
-def resolve_conflicts(student_list, course_list):
+def resolve_conflicts(student_list, course_list, verbose = False):
     da_round = 0
     
     while True:
         da_round += 1
-        print(f"Round: {da_round}")
+        if verbose:
+            print(f"Round: {da_round}")
         # proposals = dict course_list_index: students
         proposals = defaultdict(list)
         
@@ -64,12 +68,14 @@ def resolve_conflicts(student_list, course_list):
             
         if n_proposals == 0: # check if no proposals can be made, terminate
             # finalize enrollment
-            print("\tDA terminates and all proposals have been finalized.")
+            if verbose:
+                print("\tDA terminates and all proposals have been finalized.")
             for c in course_list:
                 c.finalize_enrollment()
             break
         
-        print(f"\tNumber of proposals made: {n_proposals}")
+        if verbose:
+            print(f"\tNumber of proposals made: {n_proposals}")
         
         n_rejects = 0
         # otherwise, courses tentatively accept proposing students based on their preferences
@@ -80,5 +86,7 @@ def resolve_conflicts(student_list, course_list):
             for student in rejects:
                 student.remove_course(course_id)
                 n_rejects += 1
-        print(f"\tNumber of proposals being rejected: {n_rejects}")
+        if verbose:
+            print(f"\tNumber of proposals being rejected: {n_rejects}")
+            
     return student_list, course_list

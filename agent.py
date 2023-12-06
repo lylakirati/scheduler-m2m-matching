@@ -15,6 +15,7 @@ class Student():
         self.eligible = True
         self.course_enroll = [] # indices in the course_list
         self.current_course_propose = 0 # index in the course_prefs
+        self.unavailable_times = []
         
         
     def __str__(self):
