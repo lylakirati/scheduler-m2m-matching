@@ -44,7 +44,8 @@ class Student():
         return []
             
     def add_course(self, course_id):
-        self.course_enroll.append(course_id)
+        if course_id not in self.course_enroll:
+            self.course_enroll.append(course_id)
         
     def remove_course(self, course_id):
         if course_id in self.course_enroll:
@@ -68,14 +69,14 @@ class Student():
         enroll_course_schedules = defaultdict(list) # time: c_list
         for c in self.course_enroll:
             enroll_course_schedules[course_list[c].time].append(c)
-        conflict_courses = {t: c_list for t, c_list in enroll_course_schedules if len(c_list) > 1}
-        nonconflict_courses = [c for c in self.course_enroll if c not in list(chain(*conflict_courses.items()))]
+        conflict_courses = {t: c_list for t, c_list in enroll_course_schedules.items() if len(c_list) > 1}
+        nonconflict_courses = [c for c in self.course_enroll if c not in list(chain(*conflict_courses.values()))]
         
         # keep non-conflicting most-preferred courses (providing the highest total utility)
         self.unavailable_times = enroll_course_schedules.keys()
         max_util = -1
         to_keep_courses = []
-        for comb in product(tuple(conflict_courses.items())):
+        for comb in product(*conflict_courses.values()):
             util = self.get_utilities_from_courses(nonconflict_courses) + self.get_utilities_from_courses(list(comb))
             if util > max_util:
                 max_util = util
@@ -86,7 +87,7 @@ class Student():
         self.course_enroll = nonconflict_courses + to_keep_courses
         for c in old_courses:
             if c not in self.course_enroll:
-                course_list[c].drop_student(self.student_id)
+                course_list[c].drop_student(self)
 
         self.eligible = True
         self.current_course_propose = 0  # index in the course_prefs
@@ -98,7 +99,7 @@ class Student():
             c_index = self.current_course_propose
             if course_list[c_index].time not in self.unavailable_times: # no conflict
                 course_indices.append(c_index)
-                self.update_current_course_prefs(c_index + 1)
+            self.update_current_course_prefs(c_index + 1)
         return course_indices
         
 # =============================================================================== # 
